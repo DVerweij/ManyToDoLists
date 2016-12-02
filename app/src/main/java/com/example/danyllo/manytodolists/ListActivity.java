@@ -24,7 +24,7 @@ import static android.R.layout.simple_list_item_1;
 
 public class ListActivity extends AppCompatActivity {
     ListView itemList;
-    //ToDoManager toDoManager = ToDoManager.getInstance();
+    ToDoManager toDoManager = ToDoManager.getInstance();
     ArrayList<String> itemStrings = new ArrayList<String>();
     ToDoList items;
     CustomAdapter itemAdapter;
@@ -63,7 +63,7 @@ public class ListActivity extends AppCompatActivity {
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                 //toDoManager.deleteCategory(itemStrings.get(position));
                 items.deleteItem(items.getItemList().get(position));
-                //toDoManager.deleteItem(items.getString(), items.getItemList().get(position));
+                toDoManager.deleteItem(items.getString(), items.getItemList().get(position));
                 reset();
                 return false;
             }
@@ -108,7 +108,7 @@ public class ListActivity extends AppCompatActivity {
                 //toDoManager.addCategory(input);
                 ToDoItem newItem = new ToDoItem(input);
                 items.addItem(newItem);
-                //toDoManager.addItem(items.getString(), newItem);
+                toDoManager.addItem(items.getString(), newItem);
                 ET.setText("");
                 reset();
             } else { //no entries already in the list
