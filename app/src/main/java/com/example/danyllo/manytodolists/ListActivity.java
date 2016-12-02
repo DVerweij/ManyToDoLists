@@ -87,13 +87,14 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private void reset() {
-        itemAdapter.update(items);
-        Log.d("GETCOUNT2", String.valueOf(itemAdapter.getCount()));
         try {
             writeToDos(this);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //itemAdapter.update(items);
+        itemList.setAdapter(new CustomAdapter(this, items));
+        Log.d("GETCOUNT2", String.valueOf(itemAdapter.getCount()));
     }
 
     public void AddItem(View view) {

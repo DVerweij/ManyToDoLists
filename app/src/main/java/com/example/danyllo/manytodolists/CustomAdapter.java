@@ -40,9 +40,9 @@ public class CustomAdapter extends ArrayAdapter<String> {
         //View rowView = inflater.inflate(R.layout.activity_list, parent, false);
         View rowView = inflater.inflate(R.layout.listview_row_item, parent, false);
         TextView listRow = (TextView) rowView.findViewById(R.id.rowItem);
-        /*if (completionValues[position]) {
+        if (completionValues[position]) {
             listRow.setBackgroundColor(Color.YELLOW);
-        }*/
+        }
         listRow.setText(values.get(position));
         return rowView;
     }
