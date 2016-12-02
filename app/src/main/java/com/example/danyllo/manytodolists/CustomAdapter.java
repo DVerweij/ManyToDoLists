@@ -8,6 +8,7 @@ package com.example.danyllo.manytodolists;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,8 +23,8 @@ import static android.R.layout.simple_list_item_1;
 
 public class CustomAdapter extends ArrayAdapter<String> {
     private final Context context;
-    private final ArrayList<String> values;
-    private final boolean[] completionValues;
+    private ArrayList<String> values;
+    private boolean[] completionValues;
 
     public CustomAdapter(Context context, ToDoList values) {
         super(context, R.layout.activity_list, values.getItemStrings());
@@ -33,14 +34,23 @@ public class CustomAdapter extends ArrayAdapter<String> {
     }
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        //Log.d("FINAL SHINE", "FINAL FLASH");
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         //View rowView = inflater.inflate(R.layout.activity_list, parent, false);
-        View rowView = inflater.inflate(simple_list_item_1, parent, false);
-        ListView listView = (ListView) rowView.findViewById(R.id.listview2);
-        if (completionValues[position]) {
-            listView.getChildAt(position).setBackgroundColor(Color.YELLOW);
-        }
+        View rowView = inflater.inflate(R.layout.listview_row_item, parent, false);
+        TextView listRow = (TextView) rowView.findViewById(R.id.rowItem);
+        /*if (completionValues[position]) {
+            listRow.setBackgroundColor(Color.YELLOW);
+        }*/
+        listRow.setText(values.get(position));
         return rowView;
+    }
+
+    public void update(ToDoList newValues) {
+        this.values = newValues.getItemStrings();
+        this.completionValues = newValues.getCompletionValues();
+        notifyDataSetChanged();
+        Log.d("CHANGED", "CHANGED");
     }
 }

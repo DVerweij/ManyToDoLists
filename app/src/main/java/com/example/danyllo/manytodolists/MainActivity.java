@@ -50,6 +50,15 @@ public class MainActivity extends AppCompatActivity {
         setListeners();
     }
 
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            writeToDos(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /*private void readList() {
         toDoManager.readList();
     }*/
@@ -96,15 +105,13 @@ public class MainActivity extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 goToCategoryItems(toDoManager.getCategory(categories.get(position)));
-
             }
         });
     }
 
     private void goToCategoryItems(ToDoList category) {
         Intent listActivity = new Intent(this, ListActivity.class);
-        //listActivity.putExtra("items", category);
-        listActivity.putExtra("items", category.getString());
+        listActivity.putExtra("items", category);
         startActivity(listActivity);
     }
 

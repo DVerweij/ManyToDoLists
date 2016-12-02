@@ -2,6 +2,7 @@ package com.example.danyllo.manytodolists;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class ToDoList implements Serializable{
     }
 
     public boolean[] getCompletionValues() {
+        Log.d("TAG", String.valueOf(itemList.size()));
         boolean[] bools = new boolean[itemList.size()];
         for (int i = 0; i < itemList.size(); i++) {
             bools[i] = itemList.get(i).getCompleted();

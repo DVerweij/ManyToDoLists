@@ -24,11 +24,12 @@ import static android.R.layout.simple_list_item_1;
 
 public class ListActivity extends AppCompatActivity {
     ListView itemList;
-    ToDoManager toDoManager = ToDoManager.getInstance();
+    //ToDoManager toDoManager = ToDoManager.getInstance();
     ArrayList<String> itemStrings = new ArrayList<String>();
     ToDoList items;
-    ArrayAdapter<String> itemAdapter;
+    CustomAdapter itemAdapter;
     SharedPreferences prefs;
+    String category;
 
     @Override
     protected void onCreate(Bundle savedInstanceState){
@@ -47,11 +48,22 @@ public class ListActivity extends AppCompatActivity {
         setListeners();
     }
 
+    public void onDestroy() {
+        super.onDestroy();
+        try {
+            writeToDos(this);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void setListeners() {
         itemList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                toDoManager.deleteCategory(itemStrings.get(position));
+                //toDoManager.deleteCategory(itemStrings.get(position));
+                items.deleteItem(items.getItemList().get(position));
+                //toDoManager.deleteItem(items.getString(), items.getItemList().get(position));
                 reset();
                 return false;
             }
@@ -59,38 +71,24 @@ public class ListActivity extends AppCompatActivity {
         itemList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Log.d("BOI", "BOI");
+                items.getItemList().get(position).setCompleted(true);
+                reset();
             }
         });
     }
 
     private void setItems() {
-        //items = getIntent().getExtras().getParcelable("items");
-        String category = getIntent().getStringExtra("items");
-        //ManagedList = toDoManager.readList();
-        items = toDoManager.getCategory(category);
+        items = (ToDoList) getIntent().getSerializableExtra("items");
         itemStrings = items.getItemStrings();
         itemList = (ListView) findViewById(R.id.listview2);
-        //itemAdapter = new ArrayAdapter<String>(this, simple_list_item_1, itemStrings);
         itemAdapter = new CustomAdapter(this, items);
+        Log.d("GETCOUNT", String.valueOf(itemAdapter.getCount()));
         itemList.setAdapter(itemAdapter);
     }
 
-   /* private ArrayList<String> readItems() {
-        ArrayList<ToDoItem> itemList = items.getItemList();
-        ArrayList<String> listToReadTo = new ArrayList<String>();
-        for (int i = 0; i < itemList.size(); i++) {
-            listToReadTo.add(itemList.get(i).getTitle());
-        }
-        return listToReadTo;
-    }*/
-
     private void reset() {
-        //ManagedList = toDoManager.readList();
-        itemStrings = items.getItemStrings();
-        itemAdapter.clear();
-        itemAdapter.addAll(itemStrings);
-        itemAdapter.notifyDataSetChanged();
+        itemAdapter.update(items);
+        Log.d("GETCOUNT2", String.valueOf(itemAdapter.getCount()));
         try {
             writeToDos(this);
         } catch (IOException e) {
@@ -106,7 +104,10 @@ public class ListActivity extends AppCompatActivity {
             toast.show();
         } else {
             if (!items.contains(input)) {
-                toDoManager.addCategory(input);
+                //toDoManager.addCategory(input);
+                ToDoItem newItem = new ToDoItem(input);
+                items.addItem(newItem);
+                //toDoManager.addItem(items.getString(), newItem);
                 ET.setText("");
                 reset();
             } else { //no entries already in the list
@@ -117,15 +118,15 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private void writeToDos(Context context) throws FileNotFoundException, IOException {
-        FileOutputStream fileOut = context.openFileOutput("todos", Context.MODE_PRIVATE);
+        FileOutputStream fileOut = context.openFileOutput("items", Context.MODE_PRIVATE);
         ObjectOutputStream objOut = new ObjectOutputStream(fileOut);
-        objOut.writeObject(toDoManager.readList());
+        objOut.writeObject(items);
         objOut.close();
     }
     private void readToDos(Context context) throws FileNotFoundException, ClassNotFoundException, IOException {
-        FileInputStream fileIn = context.openFileInput("todos");
+        FileInputStream fileIn = context.openFileInput("items");
         ObjectInputStream objIn = new ObjectInputStream(fileIn);
-        toDoManager.setManagedList((ArrayList<ToDoList>) objIn.readObject());
+        items = (ToDoList) objIn.readObject();
         objIn.close();
     }
 }
