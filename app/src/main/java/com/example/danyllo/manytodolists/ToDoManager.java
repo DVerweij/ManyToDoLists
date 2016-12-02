@@ -8,13 +8,14 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
  * Created by Danyllo on 29-11-2016.
  */
-public class ToDoManager {
+public class ToDoManager implements Serializable{
     private static ToDoManager ourInstance = new ToDoManager();
     private static ArrayList<ToDoList> ManagedList;
 
@@ -44,6 +45,19 @@ public class ToDoManager {
     public ArrayList<ToDoList> readList() {
         return ManagedList;
     }
+
+    public ArrayList<String> readCategories() {
+        ArrayList<String> categories = new ArrayList<String>();
+        for (int i = 0; i < ManagedList.size(); i++) {
+            categories.add(ManagedList.get(i).getString());
+        }
+        return categories;
+    }
+
+    public void setManagedList(ArrayList<ToDoList> list) {
+        ManagedList = list;
+    }
+
     public ToDoList getCategory(String category) {
         for (int i = 0; i < ManagedList.size(); i++) {
             if (ManagedList.get(i).getString().equals(category)) {
@@ -60,5 +74,10 @@ public class ToDoManager {
         ManagedList.add(new ToDoList(category));
     }
 
-    //public void deleteItem(String category)
+    public void addItem(String category, ToDoItem item) {
+        getCategory(category).addItem(item);
+    }
+    public void deleteItem(String category, ToDoItem item) {
+        getCategory(category).deleteItem(item);
+    }
 }

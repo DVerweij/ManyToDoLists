@@ -11,7 +11,7 @@ import java.util.HashMap;
  * Created by Danyllo on 1-12-2016.
  */
 
-public class ToDoList implements Parcelable{
+public class ToDoList implements Serializable{
     private ArrayList<ToDoItem> itemList;
     private String title;
 
@@ -19,18 +19,35 @@ public class ToDoList implements Parcelable{
         this.title = title;
         itemList = new ArrayList<ToDoItem>();
     }
-
-    public ToDoList(Parcel in) {
-        this.title = in.readString();
-        in.readList(this.itemList, ToDoList.class.getClassLoader());
+    public void addItem(ToDoItem item) {
+        itemList.add(item);
     }
 
+    public void deleteItem(ToDoItem item) {
+        itemList.remove(item);
+    }
     public String getString() {
         return this.title;
     }
     public ArrayList<ToDoItem> getItemList() {
         return this.itemList;
     }
+    public ArrayList<String> getItemStrings() {
+        ArrayList<String> itemStrings = new ArrayList<String>();
+        for (int i = 0; i < itemList.size(); i++) {
+            itemStrings.add(itemList.get(i).getTitle());
+        }
+        return itemStrings;
+    }
+
+    public boolean[] getCompletionValues() {
+        boolean[] bools = new boolean[itemList.size()];
+        for (int i = 0; i < itemList.size(); i++) {
+            bools[i] = itemList.get(i).getCompleted();
+        }
+        return bools;
+    }
+
     public boolean contains(String item) {
         for (int i = 0; i< itemList.size(); i++) {
             if(itemList.get(i).getTitle().equals(item)) {
@@ -39,22 +56,4 @@ public class ToDoList implements Parcelable{
         }
         return false;
     }
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeList(itemList);
-        dest.writeString(title);
-    }
-    public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
-        public ToDoList createFromParcel(Parcel in) {
-            return new ToDoList(in);
-        }
-        public ToDoList[] newArray(int size) {
-            return new ToDoList[size];
-        }
-    };
 }

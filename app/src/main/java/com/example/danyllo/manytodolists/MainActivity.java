@@ -28,7 +28,6 @@ import static android.R.layout.simple_list_item_1;
 public class MainActivity extends AppCompatActivity {
     ListView categoryList;
     ToDoManager toDoManager = ToDoManager.getInstance();
-    ArrayList<ToDoList> ManagedList;
     ArrayList<String> categories = new ArrayList<String>();
     ArrayAdapter<String> categoryAdapter;
     SharedPreferences prefs;
@@ -38,6 +37,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         prefs = this.getSharedPreferences("settings", this.MODE_PRIVATE);
+        try {
+            try {
+                readToDos(this);
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } catch (IOException f) {
+            f.printStackTrace();
+        }
         setCategories();
         setListeners();
     }
@@ -46,25 +54,25 @@ public class MainActivity extends AppCompatActivity {
         toDoManager.readList();
     }*/
 
-    private ArrayList<String> readCategories() {
+    /*private ArrayList<String> readCategories() {
         ArrayList<String> listToReadTo = new ArrayList<String>();
         for (int i = 0; i < ManagedList.size(); i++) {
             listToReadTo.add(ManagedList.get(i).getString());
         }
         return listToReadTo;
-    }
+    }*/
 
     private void setCategories() {
-        ManagedList = toDoManager.readList();
+        //ManagedList = toDoManager.readList();
         categoryList = (ListView) findViewById(R.id.listView);
-        categories = readCategories();
+        categories = toDoManager.readCategories();
         categoryAdapter = new ArrayAdapter<String>(this, simple_list_item_1, categories);
         categoryList.setAdapter(categoryAdapter);
     }
 
     private void reset() {
-        ManagedList = toDoManager.readList();
-        categories = readCategories();
+        //ManagedList = toDoManager.readList();
+        categories = toDoManager.readCategories();
         categoryAdapter.clear();
         categoryAdapter.addAll(categories);
         categoryAdapter.notifyDataSetChanged();
@@ -95,7 +103,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void goToCategoryItems(ToDoList category) {
         Intent listActivity = new Intent(this, ListActivity.class);
-        listActivity.putExtra("items", category);
+        //listActivity.putExtra("items", category);
+        listActivity.putExtra("items", category.getString());
         startActivity(listActivity);
     }
 
@@ -121,13 +130,13 @@ public class MainActivity extends AppCompatActivity {
     private void writeToDos(Context context) throws FileNotFoundException, IOException {
         FileOutputStream fileOut = context.openFileOutput("todos", Context.MODE_PRIVATE);
         ObjectOutputStream objOut = new ObjectOutputStream(fileOut);
-        objOut.writeObject(ManagedList);
+        objOut.writeObject(toDoManager.readList());
         objOut.close();
     }
     private void readToDos(Context context) throws FileNotFoundException, ClassNotFoundException, IOException {
         FileInputStream fileIn = context.openFileInput("todos");
         ObjectInputStream objIn = new ObjectInputStream(fileIn);
-        ManagedList = (ArrayList<ToDoList>) objIn.readObject();
+        toDoManager.setManagedList((ArrayList<ToDoList>) objIn.readObject());
         objIn.close();
     }
 }
