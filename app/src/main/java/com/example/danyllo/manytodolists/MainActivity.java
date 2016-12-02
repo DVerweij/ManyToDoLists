@@ -59,17 +59,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*private void readList() {
-        toDoManager.readList();
-    }*/
-
-    /*private ArrayList<String> readCategories() {
-        ArrayList<String> listToReadTo = new ArrayList<String>();
-        for (int i = 0; i < ManagedList.size(); i++) {
-            listToReadTo.add(ManagedList.get(i).getString());
-        }
-        return listToReadTo;
-    }*/
 
     private void setCategories() {
         //ManagedList = toDoManager.readList();
@@ -80,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void reset() {
-        //ManagedList = toDoManager.readList();
         categories = toDoManager.readCategories();
         categoryAdapter.clear();
         categoryAdapter.addAll(categories);
@@ -112,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
     private void goToCategoryItems(ToDoList category) {
         Intent listActivity = new Intent(this, ListActivity.class);
         listActivity.putExtra("items", category);
+        listActivity.putExtra("manager", toDoManager);
         startActivity(listActivity);
     }
 

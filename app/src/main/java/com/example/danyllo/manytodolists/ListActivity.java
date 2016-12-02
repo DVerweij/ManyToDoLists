@@ -24,7 +24,8 @@ import static android.R.layout.simple_list_item_1;
 
 public class ListActivity extends AppCompatActivity {
     ListView itemList;
-    ToDoManager toDoManager = ToDoManager.getInstance();
+    //ToDoManager toDoManager = ToDoManager.getInstance();
+    ToDoManager toDoManager;
     ArrayList<String> itemStrings = new ArrayList<String>();
     ToDoList items;
     CustomAdapter itemAdapter;
@@ -78,6 +79,7 @@ public class ListActivity extends AppCompatActivity {
     }
 
     private void setItems() {
+        toDoManager = (ToDoManager) getIntent().getSerializableExtra("manager");
         items = (ToDoList) getIntent().getSerializableExtra("items");
         itemStrings = items.getItemStrings();
         itemList = (ListView) findViewById(R.id.listview2);
